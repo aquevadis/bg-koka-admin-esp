@@ -35,7 +35,7 @@ public partial class AdminESP
         var playerSceneMode = playerCBodyComponent.SceneNode;
         if (playerSceneMode is null) return;
 
-        string modelName = GetSkeletonInstance(playerSceneMode).ModelState.ModelName;
+        string modelName = playerSceneMode.GetSkeletonInstance().ModelState.ModelName;
 
         modelRelay.SetModel(modelName);
         modelRelay.Spawnflags = 256u;
@@ -84,12 +84,5 @@ public partial class AdminESP
         glowingPlayers.Add(player.Slot, new Tuple<CBaseModelEntity, CBaseModelEntity>(modelRelay,modelGlow));
 
     }
-
-    private static CSkeletonInstance GetSkeletonInstance(CGameSceneNode node)
-    {
-        Func<nint, nint> GetSkeletonInstance = VirtualFunction.Create<nint, nint>(node.Handle, 8);
-        return new CSkeletonInstance(GetSkeletonInstance(node.Handle));
-    }
-
 
 }
