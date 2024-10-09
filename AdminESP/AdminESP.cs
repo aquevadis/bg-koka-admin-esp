@@ -63,7 +63,7 @@ public partial class AdminESP
         modelRelay.AcceptInput("FollowEntity", playerPawn, modelRelay, "!activator");
         modelGlow.AcceptInput("FollowEntity", modelRelay, modelGlow, "!activator");
 
-        //if player already has glowing metadata remove previous one before adding new ones
+        //if player already has glowing metadata remove previous one before adding new one
         if (glowingPlayers.ContainsKey(player.Slot) is true) {
 
             if (glowingPlayers[player.Slot].Item1 is not null && glowingPlayers[player.Slot].Item1.IsValid is true
