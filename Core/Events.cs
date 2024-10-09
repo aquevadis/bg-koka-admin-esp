@@ -35,7 +35,7 @@ public partial class AdminESP
 
         SetPlayerGlowing(player, player.TeamNum);
 
-        //force hiding the glowing props no matter what upon spawn(player is player)
+        //force hiding the glowing props no matter what upon spawn(player is playing)
         toggleAdminESP[player.Slot] = false;
 
         return HookResult.Continue;
