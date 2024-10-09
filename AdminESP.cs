@@ -14,7 +14,7 @@ public sealed partial class AdminESP : BasePlugin, IPluginConfig<Config>
 {
     public override string ModuleName => "Admin ESP";
     public override string ModuleAuthor => "AquaVadis";
-    public override string ModuleVersion => "1.0.0";
+    public override string ModuleVersion => "1.0.1s";
     public override string ModuleDescription => "Plugin uses code borrowed from CS2Fixes / cs2kz-metamod / hl2sdk / unknown cheats";
 
     public bool[] toggleAdminESP = new bool[64];
@@ -61,10 +61,31 @@ public sealed partial class AdminESP : BasePlugin, IPluginConfig<Config>
             foreach (var target in Utilities.GetPlayers())
             {
 
-                //skip admins that are in the spectator team only
-                if (toggleAdminESP[player.Slot] == true) 
-                    continue;
+                //check if admin has enabled ESP 
+                if (toggleAdminESP[player.Slot] == true) {
 
+                    //skip self
+                    if (target.Slot != slot) {
+
+                        //get the target's pawn
+                        var targetPawn = target.PlayerPawn.Value;
+                        if (targetPawn is null || targetPawn.IsValid is not true) continue;
+
+                        //get the target's observerpawn 
+                        var targetObserverPawn = target.ObserverPawn.Value;
+                        if (targetObserverPawn is null 
+                        || targetObserverPawn.IsValid is not true) continue;
+
+                        //we clear the spec list via clearing all of the observerTarget' pawns indexes 
+                        //from the Observer_services class that any cheat uses as a method to campare 
+                        //against current players in the server
+                        info.m_pTransmitEntity.Clear((int)targetObserverPawn.Index);
+
+                    }
+                    
+                    continue;
+                }
+                    
                 //stop transmitting any entity from the glowingPlayer list
                 foreach (var glowingProp in glowingPlayers)
                 {
@@ -73,6 +94,8 @@ public sealed partial class AdminESP : BasePlugin, IPluginConfig<Config>
                     //prop two
                     info.m_pTransmitEntity.Clear((int)glowingProp.Value.Item2.Index);
                 }
+
+
 
             }
         }

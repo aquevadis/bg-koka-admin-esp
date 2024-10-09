@@ -66,10 +66,15 @@ public partial class AdminESP
         //if player already has glowing metadata remove previous one before adding new ones
         if (glowingPlayers.ContainsKey(player.Slot) is true) {
 
-            //remove previous modelRelay prop
-            glowingPlayers[player.Slot].Item1.AddEntityIOEvent("Kill", glowingPlayers[player.Slot].Item1, null, "", 2f);
-            //remove previous modelGlow prop
-            glowingPlayers[player.Slot].Item2.AddEntityIOEvent("Kill", glowingPlayers[player.Slot].Item2, null, "", 2f);
+            if (glowingPlayers[player.Slot].Item1 is not null && glowingPlayers[player.Slot].Item1.IsValid is true
+            && glowingPlayers[player.Slot].Item2 is not null && glowingPlayers[player.Slot].Item2.IsValid is true) {
+                
+                //remove previous modelRelay prop
+                glowingPlayers[player.Slot].Item1.AcceptInput("Kill");
+                //remove previous modelGlow prop
+                glowingPlayers[player.Slot].Item2.AcceptInput("Kill");
+
+            }
 
             //remove player from the list
             glowingPlayers.Remove(player.Slot);
