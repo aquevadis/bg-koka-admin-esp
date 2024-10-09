@@ -37,14 +37,13 @@ public partial class AdminESP
 
         SetPlayerGlowing(player, player.TeamNum);
 
-
         AddTimer(2f, () => {
 
             if (player is null 
             || player.IsValid is not true 
             || player.Connected is not PlayerConnectedState.PlayerConnected) return;
 
-            //force hiding the glowing props no matter what upon spawn(player is playing)
+            //force hiding the glowing props no matter what upon spawn(this is mostly ignored on the first spawn of the round)
             toggleAdminESP[player.Slot] = false;
         });
 
@@ -53,6 +52,8 @@ public partial class AdminESP
 
     public HookResult OnRoundStart(EventRoundStart @event, GameEventInfo info)
     {
+
+        //force hiding the glowing props at round start
         foreach (var player in Utilities.GetPlayers().Where(p => p.Connected is PlayerConnectedState.PlayerConnected)) {
             
             toggleAdminESP[player.Slot] = false;

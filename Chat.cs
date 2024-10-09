@@ -20,7 +20,7 @@ public partial class AdminESP {
     public void SendMessageToSpecificChat(CCSPlayerController handle = null!, string msg = "",
         PrintTo print = PrintTo.Chat)
     {
-        var chatPrefix = ReplaceColorTags(" {GREEN}[BG-KoKa] {DEFAULT}\u226B");
+        var chatPrefix = ReplaceColorTags($" {Config.ChatPrefix} {{DEFAULT}}\u226B");
 
         switch (print)
         {
