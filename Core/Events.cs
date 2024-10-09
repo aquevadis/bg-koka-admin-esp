@@ -21,7 +21,7 @@ public partial class AdminESP
 
         //deregister event listeners
         DeregisterEventHandler<EventPlayerSpawn>(OnPlayerSpawn, HookMode.Pre);
-        RegisterEventHandler<EventPlayerDeath>(OnPlayerDeath);
+        DeregisterEventHandler<EventPlayerDeath>(OnPlayerDeath);
 
     }
 
