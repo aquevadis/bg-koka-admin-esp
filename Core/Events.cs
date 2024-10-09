@@ -49,7 +49,7 @@ public partial class AdminESP
         || player.IsValid is not true 
         || player.Connected is not PlayerConnectedState.PlayerConnected) return HookResult.Continue;
 
-        //remove glowing prop if player has one upon deaths
+        //remove glowing prop if player has one upon death
         if (glowingPlayers.ContainsKey(player.Slot) is true) {
 
             //remove previous modelRelay prop
