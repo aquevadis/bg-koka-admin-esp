@@ -1,4 +1,4 @@
-## BG-KoKa - Admin ESP
+## Admin ESP
 
 Simple admin ESP plugin
 
