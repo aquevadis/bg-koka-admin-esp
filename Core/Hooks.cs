@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Memory.DynamicFunctions;
+using CounterStrikeSharp.API.Modules.Utils;
 
 namespace AdminESP;
 
@@ -10,13 +11,13 @@ public partial class AdminESP
 {
 
     public static MemoryFunctionVoid<nint, nint, int, nint, int, short, int, bool>? CheckTransmit;
+    public static MemoryFunctionVoid<CCSPlayerPawnBase>? CCSPlayerPawnBase_PostThinkFunc;
 
     public void LoadHooks() {
 
         CheckTransmit = new(GameData.GetSignature("CheckTransmit"));
 
         CheckTransmit.Hook(Hook_CheckTransmit, HookMode.Post);
-
     }
 
     public void UnloadHooks() {

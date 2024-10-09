@@ -14,7 +14,7 @@ public sealed partial class AdminESP : BasePlugin, IPluginConfig<Config>
 {
     public override string ModuleName => "Admin ESP";
     public override string ModuleAuthor => "AquaVadis";
-    public override string ModuleVersion => "1.0.3s";
+    public override string ModuleVersion => "1.0.4s";
     public override string ModuleDescription => "Plugin uses code borrowed from CS2Fixes / cs2kz-metamod / hl2sdk / unknown cheats and xstage from CS# discord";
 
     public bool[] toggleAdminESP = new bool[64];
@@ -32,29 +32,55 @@ public sealed partial class AdminESP : BasePlugin, IPluginConfig<Config>
 
         UnloadHooks();
         DeregisterListeners();
-
     }
 
     [ConsoleCommand("css_esp", "Toggle Admin ESP")]
-    [CommandHelper(whoCanExecute: CommandUsage.CLIENT_AND_SERVER)]
-    [RequiresPermissions("@css/ban")]
+    [CommandHelper(minArgs: 0, whoCanExecute: CommandUsage.CLIENT_AND_SERVER)]
     public void OnToggleAdminEsp(CCSPlayerController? player, CommandInfo command)
     {
 
-        if (player is null || player.IsValid is not true) 
-            return;
+        if (player is null || player.IsValid is not true) return;
 
-        if (player.Team is not CsTeam.Spectator) {
+        if (AdminManager.PlayerHasPermissions(player, Config.AdminFlag) is not true) {
 
-            SendMessageToSpecificChat(player, msg: "Admin ESP is allowed only in {RED}spectate mode {DEFAULT}!", print: PrintTo.Chat);
-            return;
+            SendMessageToSpecificChat(player, msg: "Admin ESP can only be used from {GREEN}admins{DEFAULT}!", print: PrintTo.Chat);
+            return;  
         }
 
-        toggleAdminESP[player.Slot] = !toggleAdminESP[player.Slot];
-        SendMessageToSpecificChat(player, msg: $"Admin ESP has been " + (toggleAdminESP[player.Slot] ? "{GREEN}enabled!" : "{RED}disabled!"), print: PrintTo.Chat);
+        string actionIdentifier = command.GetArg(1);
+
+        if (actionIdentifier.Equals("spec") is true) {
+
+            if (player.Team is not CsTeam.Spectator) {
+
+                SendMessageToSpecificChat(player, msg: "Admin ESP is only allowed in {RED}spectate mode{DEFAULT}!", print: PrintTo.Chat);
+                return;    
+            }
+            
+            toggleAdminESP[player.Slot] = !toggleAdminESP[player.Slot];
+            SendMessageToSpecificChat(player, msg: $"Admin ESP has been " + (toggleAdminESP[player.Slot] ? "{GREEN}enabled!" : "{RED}disabled!"), print: PrintTo.Chat);
+            
+        }
+        else if (actionIdentifier.Equals("dead") is true) {
+
+            if (Config.AllowDeadAdminESP is not true) {
+                SendMessageToSpecificChat(player, msg: "Admin ESP while dead is {RED}disabled{DEFAULT}!", print: PrintTo.Chat);
+                return;
+            }
+            if (player.PawnIsAlive is true) {
+                SendMessageToSpecificChat(player, msg: "Admin ESP is only allowed while {RED}dead{DEFAULT}!", print: PrintTo.Chat);
+                return;
+            }
+            
+            toggleAdminESP[player.Slot] = !toggleAdminESP[player.Slot];
+            SendMessageToSpecificChat(player, msg: $"Admin ESP has been " + (toggleAdminESP[player.Slot] ? "{GREEN}enabled!" : "{RED}disabled!"), print: PrintTo.Chat);
+            
+        }
+        else {
+            SendMessageToSpecificChat(player, msg: $"Invalid action!", print: PrintTo.Chat);
+        }
 
     }
-
     public void OnConfigParsed(Config config)
     {
         Config = config;

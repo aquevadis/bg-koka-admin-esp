@@ -15,6 +15,7 @@ public partial class AdminESP
         RegisterEventHandler<EventPlayerSpawn>(OnPlayerSpawn, HookMode.Pre);
         RegisterEventHandler<EventPlayerDeath>(OnPlayerDeath);
         RegisterEventHandler<EventRoundStart>(OnRoundStart);
+        
     }
 
     private void DeregisterListeners()
