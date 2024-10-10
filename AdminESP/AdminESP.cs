@@ -1,10 +1,6 @@
 ﻿using System.Drawing;
-using System.Runtime.InteropServices;
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
-using CounterStrikeSharp.API.Modules.Memory;
-using CounterStrikeSharp.API.Modules.Memory.DynamicFunctions;
-using Microsoft.Extensions.Logging;
 
 namespace AdminESP;
 
@@ -73,7 +69,6 @@ public partial class AdminESP
                 glowingPlayers[player.Slot].Item1.AcceptInput("Kill");
                 //remove previous modelGlow prop
                 glowingPlayers[player.Slot].Item2.AcceptInput("Kill");
-
             }
 
             //remove player from the list

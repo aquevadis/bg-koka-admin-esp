@@ -24,7 +24,7 @@ public sealed partial class AdminESP : BasePlugin, IPluginConfig<Config>
     {
         LoadHooks();
         RegisterListeners();
-
+        
     }
 
     public override void Unload(bool hotReload)
