@@ -35,7 +35,7 @@ public sealed partial class AdminESP : BasePlugin, IPluginConfig<Config>
     }
 
     [ConsoleCommand("css_esp", "Toggle Admin ESP")]
-    [CommandHelper(minArgs: 0, whoCanExecute: CommandUsage.CLIENT_AND_SERVER)]
+    [CommandHelper(minArgs: 0, whoCanExecute: CommandUsage.CLIENT_ONLY)]
     public void OnToggleAdminEsp(CCSPlayerController? player, CommandInfo command)
     {
 
