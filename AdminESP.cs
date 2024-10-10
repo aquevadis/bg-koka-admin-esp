@@ -14,7 +14,7 @@ public sealed partial class AdminESP : BasePlugin, IPluginConfig<Config>
 {
     public override string ModuleName => "Admin ESP";
     public override string ModuleAuthor => "AquaVadis";
-    public override string ModuleVersion => "1.0.4s";
+    public override string ModuleVersion => "1.0.5s";
     public override string ModuleDescription => "Plugin uses code borrowed from CS2Fixes / cs2kz-metamod / hl2sdk / unknown cheats and xstage from CS# discord";
 
     public bool[] toggleAdminESP = new bool[64];
@@ -49,35 +49,34 @@ public sealed partial class AdminESP : BasePlugin, IPluginConfig<Config>
 
         string actionIdentifier = command.GetArg(1);
 
-        if (actionIdentifier.Equals("spec") is true) {
+        switch (player.PawnIsAlive) {
+            
+            case true:
 
-            if (player.Team is not CsTeam.Spectator) {
+                if (Config.AllowDeadAdminESP is not true) {
+                    SendMessageToSpecificChat(player, msg: "Admin ESP while dead is {RED}disabled{DEFAULT}!", print: PrintTo.Chat);
+                    return;
+                }
+                SendMessageToSpecificChat(player, msg: "Admin ESP is only allowed while {RED}dead{DEFAULT}!", print: PrintTo.Chat);
+
+            break;
+            case false:
+
+                if (player.Team is CsTeam.Spectator) {
+                    toggleAdminESP[player.Slot] = !toggleAdminESP[player.Slot];
+                    SendMessageToSpecificChat(player, msg: $"Admin ESP has been " + (toggleAdminESP[player.Slot] ? "{GREEN}enabled!" : "{RED}disabled!"), print: PrintTo.Chat); 
+                    return;
+                }
+                else {
+                    if (Config.AllowDeadAdminESP is true) {
+                        toggleAdminESP[player.Slot] = !toggleAdminESP[player.Slot];
+                        SendMessageToSpecificChat(player, msg: $"Admin ESP has been " + (toggleAdminESP[player.Slot] ? "{GREEN}enabled!" : "{RED}disabled!"), print: PrintTo.Chat);
+                        return;
+                    }
+                }
 
                 SendMessageToSpecificChat(player, msg: "Admin ESP is only allowed in {RED}spectate mode{DEFAULT}!", print: PrintTo.Chat);
-                return;    
-            }
-            
-            toggleAdminESP[player.Slot] = !toggleAdminESP[player.Slot];
-            SendMessageToSpecificChat(player, msg: $"Admin ESP has been " + (toggleAdminESP[player.Slot] ? "{GREEN}enabled!" : "{RED}disabled!"), print: PrintTo.Chat);
-            
-        }
-        else if (actionIdentifier.Equals("dead") is true) {
-
-            if (Config.AllowDeadAdminESP is not true) {
-                SendMessageToSpecificChat(player, msg: "Admin ESP while dead is {RED}disabled{DEFAULT}!", print: PrintTo.Chat);
-                return;
-            }
-            if (player.PawnIsAlive is true) {
-                SendMessageToSpecificChat(player, msg: "Admin ESP is only allowed while {RED}dead{DEFAULT}!", print: PrintTo.Chat);
-                return;
-            }
-            
-            toggleAdminESP[player.Slot] = !toggleAdminESP[player.Slot];
-            SendMessageToSpecificChat(player, msg: $"Admin ESP has been " + (toggleAdminESP[player.Slot] ? "{GREEN}enabled!" : "{RED}disabled!"), print: PrintTo.Chat);
-            
-        }
-        else {
-            SendMessageToSpecificChat(player, msg: $"Invalid action!", print: PrintTo.Chat);
+            break;
         }
 
     }

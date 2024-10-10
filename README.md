@@ -6,8 +6,7 @@ Simple admin ESP plugin
 Like any other CSS plugin; Don't forget to add the `AdminESP.json` from the `gamedata` folder to your server's gamedata folder
 
 ## Commands
-- `css_esp spec` - `Toggle ESP` - toggle seeing players behind walls while spec(allowed only for flag @css/ban and spectators team)
-- `css_esp dead` - `Toggle ESP` - toggle seeing players behind walls while dead(allowed only if AllowDeadAdminESP is set to true)
+- `css_esp` - `Toggle ESP` - toggle seeing players behind walls while spec/dead(allowed only for flag @css/ban + spec team; if AllowDeadAdminESP is set to true dead admins can also toggle esp)
 
 ## Configuration (`counterstrikesharp/configs/plugins/AdminESP` and auto-generated)
 - "debug_mode" - `not used`
@@ -15,3 +14,4 @@ Like any other CSS plugin; Don't forget to add the `AdminESP.json` from the `gam
 - "admin_flag" - default `@css/ban`
 - "hide_from_spectator_list" - Whether to hide the Admin that is using the ESP from a cheats spectator's list(tested on neverlose)
 - "allow_esp_when_dead" - Wether to allow the dead admins to enter esp
+- "skip_spectating_espers" - Skip force hidding ESP if spectating admin has enabled ESP

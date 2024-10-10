@@ -1,5 +1,6 @@
 ﻿using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
+using CounterStrikeSharp.API.Modules.Admin;
 using CounterStrikeSharp.API.Modules.Entities;
 using CounterStrikeSharp.API.Modules.Utils;
 
@@ -56,6 +57,9 @@ public partial class AdminESP
 
         //force hiding the glowing props at round start
         foreach (var player in Utilities.GetPlayers().Where(p => p.Connected is PlayerConnectedState.PlayerConnected)) {
+            
+            if (toggleAdminESP[player.Slot] is true && player.Team is CsTeam.Spectator && Config.SkipSpectatingEsps is true) 
+                continue;
             
             toggleAdminESP[player.Slot] = false;
         }
