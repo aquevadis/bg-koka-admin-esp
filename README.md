@@ -14,4 +14,4 @@ Like any other CSS plugin; Don't forget to add the `AdminESP.json` from the `gam
 - "admin_flag" - default `@css/ban`
 - "hide_from_spectator_list" - Whether to hide the Admin that is using the ESP from a cheats spectator's list(tested on neverlose)
 - "allow_esp_when_dead" - Wether to allow the dead admins to enter esp
-- "skip_spectating_espers" - Skip force hidding ESP if spectating admin has enabled ESP
+- "skip_spectating_espers" - Skip force hidding glowing props if spectating admin has enabled ESP
