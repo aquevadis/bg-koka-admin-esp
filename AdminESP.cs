@@ -47,8 +47,6 @@ public sealed partial class AdminESP : BasePlugin, IPluginConfig<Config>
             return;  
         }
 
-        string actionIdentifier = command.GetArg(1);
-
         switch (player.PawnIsAlive) {
             
             case true:
