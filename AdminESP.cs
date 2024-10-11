@@ -14,7 +14,7 @@ public sealed partial class AdminESP : BasePlugin, IPluginConfig<Config>
 {
     public override string ModuleName => "Admin ESP";
     public override string ModuleAuthor => "AquaVadis";
-    public override string ModuleVersion => "1.0.6s";
+    public override string ModuleVersion => "1.0.7s";
     public override string ModuleDescription => "Plugin uses code borrowed from CS2Fixes / cs2kz-metamod / hl2sdk / unknown cheats and xstage from CS# discord";
 
     public bool[] toggleAdminESP = new bool[64];
@@ -25,6 +25,20 @@ public sealed partial class AdminESP : BasePlugin, IPluginConfig<Config>
         LoadHooks();
         RegisterListeners();
         
+
+        if (hotReload) {
+      
+            foreach (var player in Utilities.GetPlayers().Where(p => p is not null 
+                                                                && p.IsValid is true
+                                                                && p.Connected is PlayerConnectedState.PlayerConnected)) {
+
+                if (cachedPlayers.Contains(player) is not true)
+                    cachedPlayers.Add(player);
+
+            }
+
+        }
+
     }
 
     public override void Unload(bool hotReload)
@@ -51,11 +65,11 @@ public sealed partial class AdminESP : BasePlugin, IPluginConfig<Config>
             
             case true:
 
-                if (Config.AllowDeadAdminESP is not true) {
-                    SendMessageToSpecificChat(player, msg: "Admin ESP while dead is {RED}disabled{DEFAULT}!", print: PrintTo.Chat);
+                if (Config.AllowDeadAdminESP is true) {
+                    SendMessageToSpecificChat(player, msg: "You should be {RED}dead {DEFAULT}to use Admin ESP!", print: PrintTo.Chat);
                     return;
                 }
-                SendMessageToSpecificChat(player, msg: "Admin ESP is only allowed while {RED}dead{DEFAULT}!", print: PrintTo.Chat);
+                SendMessageToSpecificChat(player, msg: "Admin ESP is only allowed while {RED}spectating{DEFAULT}!", print: PrintTo.Chat);
 
             break;
             case false:

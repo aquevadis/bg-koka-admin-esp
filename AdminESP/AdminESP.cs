@@ -10,6 +10,8 @@ public partial class AdminESP
     public Dictionary</*player slot*/int, 
                     Tuple</*prop 1*/CBaseModelEntity, /*prop 2*/CBaseModelEntity>> glowingPlayers = new();
 
+    public List<CCSPlayerController> cachedPlayers = new();
+
     public void SetPlayerGlowing(CCSPlayerController player, int team)
     {
 

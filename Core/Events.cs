@@ -1,6 +1,5 @@
 ﻿using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
-using CounterStrikeSharp.API.Modules.Admin;
 using CounterStrikeSharp.API.Modules.Entities;
 using CounterStrikeSharp.API.Modules.Utils;
 
@@ -12,6 +11,10 @@ public partial class AdminESP
     private void RegisterListeners()
     {
 
+        RegisterListener<Listeners.OnClientAuthorized>(OnClientAuthorized);
+        RegisterListener<Listeners.OnClientPutInServer>(OnClientPutInServer);
+        RegisterListener<Listeners.OnClientDisconnect>(OnClientDisconnected);
+
         //register event listeners
         RegisterEventHandler<EventPlayerSpawn>(OnPlayerSpawn, HookMode.Pre);
         RegisterEventHandler<EventPlayerDeath>(OnPlayerDeath);
@@ -22,12 +25,38 @@ public partial class AdminESP
     private void DeregisterListeners()
     {
 
+        RemoveListener<Listeners.OnClientAuthorized>(OnClientAuthorized);
+        RemoveListener<Listeners.OnClientPutInServer>(OnClientPutInServer);
+        RemoveListener<Listeners.OnClientDisconnect>(OnClientDisconnected);
+
         //deregister event listeners
         DeregisterEventHandler<EventPlayerSpawn>(OnPlayerSpawn, HookMode.Pre);
         DeregisterEventHandler<EventPlayerDeath>(OnPlayerDeath);
         DeregisterEventHandler<EventRoundStart>(OnRoundStart);
 
     }
+
+    private void OnClientAuthorized(int slot, SteamID steamid)
+    {
+
+        var player = Utilities.GetPlayerFromSlot(slot);
+        if(player == null || player.IsValid is not true) return;
+
+        if (cachedPlayers.Contains(player) is not true)
+            cachedPlayers.Add(player);
+        
+    }
+
+    private void OnClientPutInServer(int slot)
+    {
+        var player = Utilities.GetPlayerFromSlot(slot);
+        if (player is null || player.IsBot is not true) return;
+
+        if (cachedPlayers.Contains(player) is not true)
+            cachedPlayers.Add(player);
+        
+    }
+
 
     public HookResult OnPlayerSpawn(EventPlayerSpawn @event, GameEventInfo info)
     {
@@ -55,13 +84,15 @@ public partial class AdminESP
     public HookResult OnRoundStart(EventRoundStart @event, GameEventInfo info)
     {
 
-        //force hiding the glowing props at round start
-        foreach (var player in Utilities.GetPlayers().Where(p => p.Connected is PlayerConnectedState.PlayerConnected)) {
-            
-            if (toggleAdminESP[player.Slot] is true && player.Team is CsTeam.Spectator && Config.SkipSpectatingEsps is true) 
+        for (int i = 0; i < cachedPlayers.Count(); i++) {
+
+            if (cachedPlayers[i] is null || cachedPlayers[i].IsValid is not true) continue;
+
+            if (toggleAdminESP[cachedPlayers[i].Slot] is true && cachedPlayers[i].Team is CsTeam.Spectator && Config.SkipSpectatingEsps is true) 
                 continue;
             
-            toggleAdminESP[player.Slot] = false;
+            toggleAdminESP[cachedPlayers[i].Slot] = false;
+
         }
 
         return HookResult.Continue;
@@ -93,6 +124,17 @@ public partial class AdminESP
         }
 
         return HookResult.Continue;
+    }
+
+    private void OnClientDisconnected(int slot)
+    {
+
+        var player = Utilities.GetPlayerFromSlot(slot);
+        if (player == null || player.IsValid is not true) return;
+
+        if (cachedPlayers.Contains(player) is true)
+            cachedPlayers.Remove(player);
+        
     }
 
 

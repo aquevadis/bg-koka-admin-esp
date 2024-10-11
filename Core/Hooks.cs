@@ -41,26 +41,32 @@ public partial class AdminESP
 
             if (player is null || player.IsValid is not true) continue;
 
-            foreach (var target in Utilities.GetPlayers())
-            {
-
+            //itereate cached players
+            for (int j = 0; j < cachedPlayers.Count(); j++) {
+                
                 //leave self's observerPawn so it can spectate and check if feature is enabled
                 //we are clearing the whole spectator list as it doesn't work relaibly per person basis
-                if (target.Slot != slot && Config.HideAdminSpectators is true) {
+                if (Config.HideAdminSpectators is true) {
 
-                    //get the target's pawn
-                    var targetPawn = target.PlayerPawn.Value;
-                    if (targetPawn is null || targetPawn.IsValid is not true) continue;
+                    if (cachedPlayers[j] is null || cachedPlayers[j].IsValid is not true) continue;
 
-                    //get the target's observerpawn 
-                    var targetObserverPawn = target.ObserverPawn.Value;
-                    if (targetObserverPawn is null 
-                    || targetObserverPawn.IsValid is not true) continue;
+                    //check if it 'us' in the current context and do the magic only if it's not
+                    if (cachedPlayers[j].Slot != slot) {
 
-                    //we clear the spec list via clearing all of the observerTarget' pawns indexes 
-                    //from the Observer_services class that any cheat uses as a method to campare 
-                    //against current players in the server
-                    info.m_pTransmitEntity.Clear((int)targetObserverPawn.Index);
+                        //get the target's pawn
+                        var targetPawn = cachedPlayers[j].PlayerPawn.Value;
+                        if (targetPawn is null || targetPawn.IsValid is not true) continue;
+
+                        //get the target's observerpawn 
+                        var targetObserverPawn = cachedPlayers[j].ObserverPawn.Value;
+                        if (targetObserverPawn is null 
+                        || targetObserverPawn.IsValid is not true) continue;
+
+                        //we clear the spec list via clearing all of the observerTarget' pawns indexes 
+                        //from the Observer_services class that any cheat uses as a method to campare 
+                        //against current players in the server
+                        info.m_pTransmitEntity.Clear((int)targetObserverPawn.Index);
+                    }
                 }
 
                 //check if admin has enabled ESP 
@@ -77,6 +83,7 @@ public partial class AdminESP
                 }
 
             }
+
         }
         
         return HookResult.Continue;
