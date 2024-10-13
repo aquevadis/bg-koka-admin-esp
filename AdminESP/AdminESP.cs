@@ -12,6 +12,49 @@ public partial class AdminESP
 
     public List<CCSPlayerController> cachedPlayers = new();
 
+    public void SetAllPlayersGlowing() {
+
+        for (int i = 0; i < cachedPlayers.Count(); i++) {
+
+            //set glowing only valid and alive players
+            if (cachedPlayers[i] is null || cachedPlayers[i].IsValid is not true || cachedPlayers[i].PawnIsAlive is not true) continue;
+
+            SetPlayerGlowing(cachedPlayers[i], cachedPlayers[i].TeamNum);
+
+        }
+
+        togglePlayersGlowing = true;
+
+    }
+
+    public void RemoveAllGlowingPlayers() {
+
+        foreach (var glowingProp in glowingPlayers.Values)
+        {
+           if (glowingProp.Item1 is not null && glowingProp.Item1.IsValid is true
+            && glowingProp.Item2 is not null && glowingProp.Item2.IsValid is true) {
+                
+                //remove previous modelRelay prop
+                glowingProp.Item1.AcceptInput("Kill");
+                //remove previous modelGlow prop
+                glowingProp.Item2.AcceptInput("Kill");
+            }
+        }
+
+        togglePlayersGlowing = false;
+
+    }
+
+    public bool AreThereEsperingAdmins() {
+
+        foreach (var toggledAdminESP in toggleAdminESP)
+            if (toggledAdminESP is true)
+                return true;
+            
+        return false;
+
+    }
+
     public void SetPlayerGlowing(CCSPlayerController player, int team)
     {
 

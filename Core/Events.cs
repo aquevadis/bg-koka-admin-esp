@@ -12,6 +12,7 @@ public partial class AdminESP
     {
 
         RegisterListener<Listeners.OnClientAuthorized>(OnClientAuthorized);
+        RegisterListener<Listeners.OnClientConnected>(OnClientConnected);
         RegisterListener<Listeners.OnClientPutInServer>(OnClientPutInServer);
         RegisterListener<Listeners.OnClientDisconnect>(OnClientDisconnected);
 
@@ -26,6 +27,7 @@ public partial class AdminESP
     {
 
         RemoveListener<Listeners.OnClientAuthorized>(OnClientAuthorized);
+        RemoveListener<Listeners.OnClientConnected>(OnClientConnected);
         RemoveListener<Listeners.OnClientPutInServer>(OnClientPutInServer);
         RemoveListener<Listeners.OnClientDisconnect>(OnClientDisconnected);
 
@@ -47,6 +49,17 @@ public partial class AdminESP
         
     }
 
+    private void OnClientConnected(int slot)
+    {
+
+        var player = Utilities.GetPlayerFromSlot(slot);
+        if(player == null || player.IsValid is not true) return;
+
+        if (cachedPlayers.Contains(player) is not true)
+            cachedPlayers.Add(player);
+        
+    }
+
     private void OnClientPutInServer(int slot)
     {
         var player = Utilities.GetPlayerFromSlot(slot);
@@ -57,7 +70,6 @@ public partial class AdminESP
         
     }
 
-
     public HookResult OnPlayerSpawn(EventPlayerSpawn @event, GameEventInfo info)
     {
         var player = @event.Userid;
@@ -65,8 +77,6 @@ public partial class AdminESP
         if (player is null 
         || player.IsValid is not true 
         || player.Connected is not PlayerConnectedState.PlayerConnected) return HookResult.Continue;
-
-        SetPlayerGlowing(player, player.TeamNum);
 
         AddTimer(2f, () => {
 
@@ -94,6 +104,9 @@ public partial class AdminESP
             toggleAdminESP[cachedPlayers[i].Slot] = false;
 
         }
+
+        if (togglePlayersGlowing is true)
+            togglePlayersGlowing = false;
 
         return HookResult.Continue;
     }

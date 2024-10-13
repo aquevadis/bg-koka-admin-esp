@@ -76,10 +76,17 @@ public partial class AdminESP
                 //stop transmitting any entity from the glowingPlayers list
                 foreach (var glowingProp in glowingPlayers)
                 {
-                    //prop one
-                    info.m_pTransmitEntity.Clear((int)glowingProp.Value.Item1.Index);
-                    //prop two
-                    info.m_pTransmitEntity.Clear((int)glowingProp.Value.Item2.Index);
+
+                    if (glowingProp.Value.Item1 is not null && glowingProp.Value.Item1.IsValid is true
+                    && glowingProp.Value.Item2 is not null && glowingProp.Value.Item2.IsValid is true) {
+
+                        //prop one
+                        info.m_pTransmitEntity.Clear((int)glowingProp.Value.Item1.Index);
+                        //prop two
+                        info.m_pTransmitEntity.Clear((int)glowingProp.Value.Item2.Index);
+
+                    }
+
                 }
 
             }
