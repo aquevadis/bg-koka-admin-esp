@@ -125,10 +125,11 @@ public partial class AdminESP
                         info.TransmitEntities.Remove((int)glowingProp.Value.Item2.Index);
 
                     }
-
                 }
+
             }
         }
+
        
     }
 
@@ -173,7 +174,15 @@ public partial class AdminESP
         //check if there are espering admins and if SkipSpectatingEsps is true, to restore the glowing props
         Server.NextFrame(() => {
 
-            if (AreThereEsperingAdmins() is true && Config.SkipSpectatingEsps is true) 
+            //remove props if there isn't any espering admin/s
+            if (AreThereEsperingAdmins() is false) {
+
+                RemoveAllGlowingPlayers();
+                return;
+            }
+
+            //respawn the glowing props if there are espering admins and SkipSpectatingEsps is true
+            if (AreThereEsperingAdmins() is true && Config.SkipSpectatingEsps is true)
                 SetAllPlayersGlowing();
 
         });
@@ -215,6 +224,11 @@ public partial class AdminESP
         var player = Utilities.GetPlayerFromSlot(slot);
         if (player == null || player.IsValid is not true) return;
 
+        //set 'toggleAdminESP' to false regardless, on player disconnected
+        //thus avoid any lingering glowing props
+        toggleAdminESP[slot] = false;
+
+        //remove player from cached list
         if (cachedPlayers.Contains(player) is true)
             cachedPlayers.Remove(player);
         

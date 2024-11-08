@@ -14,7 +14,7 @@ public sealed partial class AdminESP : BasePlugin, IPluginConfig<Config>
 {
     public override string ModuleName => "Admin ESP";
     public override string ModuleAuthor => "AquaVadis";
-    public override string ModuleVersion => "1.0.9s";
+    public override string ModuleVersion => "1.1.0s";
     public override string ModuleDescription => "Plugin uses code borrowed from CS2Fixes / cs2kz-metamod / hl2sdk / unknown cheats and xstage from CS# discord";
 
     public bool[] toggleAdminESP = new bool[64];

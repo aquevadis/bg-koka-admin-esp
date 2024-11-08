@@ -16,7 +16,7 @@ public partial class AdminESP
 
         for (int i = 0; i < cachedPlayers.Count(); i++) {
 
-            //set glowing only valid and alive players
+            //skip invalid and dead players when assigning prop
             if (cachedPlayers[i] is null || cachedPlayers[i].IsValid is not true || cachedPlayers[i].PawnIsAlive is not true) continue;
 
             SetPlayerGlowing(cachedPlayers[i], cachedPlayers[i].TeamNum);
