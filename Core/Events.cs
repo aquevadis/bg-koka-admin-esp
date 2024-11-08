@@ -15,6 +15,7 @@ public partial class AdminESP
         RegisterListener<Listeners.OnClientConnected>(OnClientConnected);
         RegisterListener<Listeners.OnClientPutInServer>(OnClientPutInServer);
         RegisterListener<Listeners.OnClientDisconnect>(OnClientDisconnected);
+        RegisterListener<Listeners.CheckTransmit>(CheckTransmitListener);
 
         //register event listeners
         RegisterEventHandler<EventPlayerSpawn>(OnPlayerSpawn, HookMode.Pre);
@@ -30,6 +31,7 @@ public partial class AdminESP
         RemoveListener<Listeners.OnClientConnected>(OnClientConnected);
         RemoveListener<Listeners.OnClientPutInServer>(OnClientPutInServer);
         RemoveListener<Listeners.OnClientDisconnect>(OnClientDisconnected);
+        RemoveListener<Listeners.CheckTransmit>(CheckTransmitListener);
 
         //deregister event listeners
         DeregisterEventHandler<EventPlayerSpawn>(OnPlayerSpawn, HookMode.Pre);
@@ -70,6 +72,66 @@ public partial class AdminESP
         
     }
 
+    private void CheckTransmitListener(CCheckTransmitInfoList infoList)
+    {
+
+        foreach ((CCheckTransmitInfo info, CCSPlayerController? player) in infoList)
+        {
+
+            if (player is null || player.IsValid is not true) continue;
+
+            //itereate cached players
+            for (int i = 0; i < cachedPlayers.Count(); i++) {
+                
+                //leave self's observerPawn so it can spectate and check if feature is enabled
+                //we are clearing the whole spectator list as it doesn't work relaibly per person basis
+                if (Config.HideAdminSpectators is true) {
+
+                    if (cachedPlayers[i] is null || cachedPlayers[i].IsValid is not true) continue;
+
+                    //check if it 'us' in the current context and do the magic only if it's not
+                    if (cachedPlayers[i].Slot != player.Slot) {
+
+                        //get the target's pawn
+                        var targetPawn = cachedPlayers[i].PlayerPawn.Value;
+                        if (targetPawn is null || targetPawn.IsValid is not true) continue;
+
+                        //get the target's observerpawn 
+                        var targetObserverPawn = cachedPlayers[i].ObserverPawn.Value;
+                        if (targetObserverPawn is null 
+                        || targetObserverPawn.IsValid is not true) continue;
+
+                        //we clear the spec list via clearing all of the observerTarget' pawns indexes 
+                        //from the Observer_services class that any cheat uses as a method to campare 
+                        //against current players in the server
+                        info.TransmitEntities.Remove((int)targetObserverPawn.Index);
+                    }
+                }
+
+                //check if admin has enabled ESP 
+                if (toggleAdminESP[player.Slot] == true)
+                    continue;
+                    
+                //stop transmitting any entity from the glowingPlayers list
+                foreach (var glowingProp in glowingPlayers)
+                {
+
+                    if (glowingProp.Value.Item1 is not null && glowingProp.Value.Item1.IsValid is true
+                    && glowingProp.Value.Item2 is not null && glowingProp.Value.Item2.IsValid is true) {
+
+                        //prop one
+                        info.TransmitEntities.Remove((int)glowingProp.Value.Item1.Index);
+                        //prop two
+                        info.TransmitEntities.Remove((int)glowingProp.Value.Item2.Index);
+
+                    }
+
+                }
+            }
+        }
+       
+    }
+
     public HookResult OnPlayerSpawn(EventPlayerSpawn @event, GameEventInfo info)
     {
         var player = @event.Userid;
@@ -107,6 +169,14 @@ public partial class AdminESP
 
         if (togglePlayersGlowing is true)
             togglePlayersGlowing = false;
+
+        //check if there are espering admins and if SkipSpectatingEsps is true, to restore the glowing props
+        Server.NextFrame(() => {
+
+            if (AreThereEsperingAdmins() is true && Config.SkipSpectatingEsps is true) 
+                SetAllPlayersGlowing();
+
+        });
 
         return HookResult.Continue;
     }
