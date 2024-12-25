@@ -3,7 +3,7 @@
 Simple admin ESP plugin
 
 ## Installation
-Like any other CSS plugin; Don't forget to add the `AdminESP.json` from the `gamedata` folder to your server's gamedata folder
+Like any other CSS plugin;
 
 ## Commands
 - `css_esp` - `Toggle ESP` - toggle seeing players behind walls while spec/dead(allowed only for flag @css/ban + spec team; if AllowDeadAdminESP is set to true dead admins can also toggle esp)
